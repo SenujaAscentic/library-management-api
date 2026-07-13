@@ -1,54 +1,53 @@
 using Library.Api.Domain.Entities;
 using Library.Api.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Library.Api.Infrastructure.Repositories.Interfaces;
+
+namespace Library.Api.Infrastructure.Repositories.Implementations;
 
 public class BookRepository : IBookRepository
 {
-    private readonly LibraryDbContext _context;
+    private readonly LibraryDbContext _db;
 
-    public BookRepository(LibraryDbContext context)
+    public BookRepository(LibraryDbContext db)
     {
-        _context = context;
+        _db = db;
     }
 
-    public async Task<List<Book>> GetAllBooksAsync()
+    public async Task<List<Book>> GetAllAsync()
     {
-        return await _context.Books.ToListAsync();
+        return await _db.Books.ToListAsync();
     }
 
-    public async Task<Book?> GetBookByIdAsync(Guid bookId)
+    public async Task<Book?> GetByIdAsync(Guid bookId)
     {
-        return await _context.Books.FindAsync(bookId);
+        return await _db.Books.FirstOrDefaultAsync(b => b.Id == bookId);
     }
 
-    public async Task<Book?> GetBookByIsbnAsync(string isbn)
+    public async Task<Book?> GetByIsbnAsync(string isbn)
     {
-        return await _context.Books.FirstOrDefaultAsync(b => b.Isbn == isbn);
+        return await _db.Books.FirstOrDefaultAsync(b => b.Isbn == isbn);
     }
 
-    public async Task AddBookAsync(Book book)
+    public async Task AddAsync(Book book)
     {
-        await _context.Books.AddAsync(book);
-        await SaveChangesAsync();
+        await _db.Books.AddAsync(book);
+        
     }
 
-    public async Task UpdateBookAsync(Book book)
+    public void Update(Book book)
     {
-        _context.Books.Update(book);
-        await SaveChangesAsync();
+        _db.Books.Update(book);
+        
     }
 
-    public async Task DeleteBookAsync(Guid bookId)
+    public void Delete(Book book)
     {
-        var book = await GetBookByIdAsync(bookId);
-        if (book != null)
-        {
-            _context.Books.Remove(book);
-            await SaveChangesAsync();
-        }
+        _db.Books.Remove(book);
     }
 
     public async Task SaveChangesAsync()
     {
-        await _context.SaveChangesAsync();
+        await _db.SaveChangesAsync();
     }
 }
