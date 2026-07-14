@@ -9,8 +9,7 @@ public interface IBorrowingService
 
     Task<List<BorrowingResponse>> GetAllAsync();
 
-    Task<List<BorrowingResponse>> GetByMemberAsync(
-        Guid memberId);
+    Task<List<BorrowingResponse>> Get(Guid memberId);
 
     Task ReturnAsync(Guid borrowingId);
 }

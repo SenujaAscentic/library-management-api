@@ -24,6 +24,11 @@ public class MemberRepository : IMemberRepository
         return await _db.Members.FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<Member?> GetByEmailAsync(string email)
+    {
+        return await _db.Members.FirstOrDefaultAsync(x => x.Email == email);
+    }
+
     public async Task AddAsync(Member member)
     {
         await _db.Members.AddAsync(member);
