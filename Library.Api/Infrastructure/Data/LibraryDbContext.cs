@@ -14,4 +14,17 @@ public class LibraryDbContext : DbContext
     public DbSet<Member> Members => Set<Member>();
 
     public DbSet<Borrowing> Borrowings => Set<Borrowing>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Book>()
+            .HasIndex(x=> x.Isbn)
+            .IsUnique();
+
+        modelBuilder.Entity<Member>()
+            .HasIndex(x => x.Email)
+            .IsUnique();    
+    }
 }
