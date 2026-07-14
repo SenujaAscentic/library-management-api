@@ -1,6 +1,7 @@
 
 
 using Library.Api.Application.Interfaces;
+using Library.Api.Common.Exceptions;
 using Library.Api.Contracts.Books;
 using Library.Api.Domain.Entities;
 using Library.Api.Infrastructure.Repositories.Interfaces;
@@ -20,7 +21,7 @@ public class BookService : IBookService
         var existingBook = await _bookRepository.GetByIsbnAsync(request.Isbn);
         if (existingBook is not null)
         {
-            throw new Exception("ISBN already exists.");
+            throw new ConflictException("ISBN already exists.");
         }
         var book = new Book
         {
@@ -78,12 +79,12 @@ public class BookService : IBookService
         var book = await _bookRepository.GetByIdAsync(id);
         if (book is null)
         {
-            throw new Exception("Book not found.");
+            throw new NotFoundException("Book not found.");
         }
         var duplicateBook = await _bookRepository.GetByIsbnAsync(request.Isbn);
         if (duplicateBook is not null && book.Id != id)
         {
-            throw new Exception("ISBN already exists.");
+            throw new ConflictException("ISBN already exists.");
         }
 
         book.Title = request.Title;
@@ -98,7 +99,7 @@ public class BookService : IBookService
         var book = await _bookRepository.GetByIdAsync(id);
         if (book is null)
         {
-            throw new Exception("Book not found.");
+            throw new NotFoundException("Book not found.");
         }
         _bookRepository.Delete(book);
         await _bookRepository.SaveChangesAsync();

@@ -1,4 +1,5 @@
 using Library.Api.Application.Interfaces;
+using Library.Api.Common.Exceptions;
 using Library.Api.Contracts.Borrowings;
 using Library.Api.Domain.Entities;
 using Library.Api.Domain.Enums;
@@ -29,7 +30,7 @@ public class BorrowingService : IBorrowingService
 
         if (book is null)
         {
-            throw new Exception("Book not found");
+            throw new NotFoundException("Book not found");
         }
 
         var member =
@@ -38,18 +39,18 @@ public class BorrowingService : IBorrowingService
 
         if (member is null)
         {
-            throw new Exception("Member not found");
+            throw new NotFoundException("Member not found");
         }
 
         if (!member.IsActive)
         {
-            throw new Exception(
+            throw new BusinessRuleException(
                 "Member is inactive");
         }
 
         if (book.AvailableCopies <= 0)
         {
-            throw new Exception(
+            throw new BusinessRuleException(
                 "Book is unavailable");
         }
 
@@ -60,7 +61,7 @@ public class BorrowingService : IBorrowingService
 
         if (activeBorrowings.Count >= 3)
         {
-            throw new Exception(
+            throw new BusinessRuleException(
                 "Member borrowing limit exceeded");
         }
 
@@ -139,14 +140,12 @@ public class BorrowingService : IBorrowingService
 
         if (borrowing is null)
         {
-            throw new Exception(
-                "Borrowing record not found");
+            throw new NotFoundException("Borrowing record not found");
         }
 
         if (borrowing.ReturnedDate is not null)
         {
-            throw new Exception(
-                "Book already returned");
+            throw new BusinessRuleException("Book already returned");
         }
 
         var book =
@@ -155,8 +154,7 @@ public class BorrowingService : IBorrowingService
 
         if (book is null)
         {
-            throw new Exception(
-                "Book not found");
+            throw new NotFoundException("Book not found");
         }
 
         borrowing.ReturnedDate =
