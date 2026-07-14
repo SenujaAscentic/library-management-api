@@ -4,10 +4,13 @@ using Library.Api.Infrastructure.Data;
 using Library.Api.Infrastructure.Repositories.Implementations;
 using Library.Api.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-
-
+using Library.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<LibraryDbContext>(options =>
 {
@@ -15,19 +18,30 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
         builder.Configuration.GetConnectionString("LibraryDb"));
 });
 
-builder.Services.AddOpenApi();
 
+// Repositories
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+
+// Application Services
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBorrowingService, BorrowingService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-app.MapOpenApi();
+
+// Endpoints
+app.MapBookEndpoints();
+app.MapMemberEndpoints();
+app.MapBorrowingEndpoints();
 
 app.Run();
