@@ -5,6 +5,9 @@ using Library.Api.Infrastructure.Repositories.Implementations;
 using Library.Api.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Library.Api.Endpoints;
+using Library.Api.Middleware;
+using Library.Api.Validators;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +32,12 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IBorrowingService, BorrowingService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 
+// Validators
+builder.Services.AddValidatorsFromAssemblyContaining<CreateBookRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateBookRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateMemberRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<UpdateMemberRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<BorrowBookRequestValidator>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -38,7 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseMiddleware<ExceptionMiddleware>();
 // Endpoints
 app.MapBookEndpoints();
 app.MapMemberEndpoints();
