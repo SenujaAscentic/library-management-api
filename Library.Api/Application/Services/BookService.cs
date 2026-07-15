@@ -58,12 +58,12 @@ public class BookService : IBookService
             book.AvailableCopies)).ToList();
     }
 
-    public async Task<BookResponse?> GetByIdAsync(Guid id)
+    public async Task<BookResponse> GetByIdAsync(Guid id)
     {
         var book = await _bookRepository.GetByIdAsync(id);
         if (book is null)
         {
-            return null;
+            throw new NotFoundException("Book not found.");
         }
         return new BookResponse(
             book.Id,

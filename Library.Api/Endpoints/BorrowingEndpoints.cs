@@ -1,4 +1,6 @@
+using FluentValidation;
 using Library.Api.Application.Interfaces;
+using Library.Api.Common.Validation;
 using Library.Api.Contracts.Borrowings;
 
 namespace Library.Api.Endpoints;
@@ -7,8 +9,13 @@ public static class BorrowingEndpoints
 {
     public static void MapBorrowingEndpoints(this WebApplication app)
     {
-        app.MapPost("/api/borrowings", async (BorrowBookRequest request, IBorrowingService service)=>
+        app.MapPost("/api/borrowings", async (BorrowBookRequest request,IValidator<BorrowBookRequest> validator, IBorrowingService service)=>
         {
+            var result = await ValidationHelper.ValidateAsync(request, validator);
+            if (result is not null)
+            {
+                return result;
+            }
             var borrowing = await service.BorrowAsync(request);
             return Results.Created($"/api/borrowings/{borrowing.Id}", borrowing);
         });

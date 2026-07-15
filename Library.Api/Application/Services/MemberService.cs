@@ -1,5 +1,6 @@
 using Library.Api.Application.contracts.Members;
 using Library.Api.Application.Interfaces;
+using Library.Api.Common.Exceptions;
 using Library.Api.Contracts.Members;
 using Library.Api.Domain.Entities;
 using Library.Api.Infrastructure.Repositories.Interfaces;
@@ -30,7 +31,7 @@ public class MemberService : IMemberService
     public async Task<MemberResponse?> GetByIdAsync(Guid id)
     {
         var member = await _memberRepository.GetByIdAsync(id);
-        if (member == null) return null;
+        if (member == null) throw new NotFoundException("Member not found.");
 
         return new MemberResponse(
             member.Id,
