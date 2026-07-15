@@ -37,7 +37,7 @@ The system allows librarians to manage books, members, and borrowing operations 
 
 ## Technologies Used
 
-- .NET 9
+- .NET 10
 - ASP.NET Core Minimal APIs
 - Entity Framework Core
 - PostgreSQL
@@ -259,7 +259,7 @@ Unit tests were implemented for Borrowing Service business rules.
 
 ### Prerequisites
 
-- .NET 9 SDK
+- .NET 10 SDK
 - Docker Desktop
 - PostgreSQL (or Docker)
 
