@@ -1,6 +1,6 @@
-using Library.Api.Domain.Enums;
+using Library.Domain.Enums;
 
-namespace Library.Api.Domain.Entities;
+namespace Library.Domain.Entities;
 
 public class Borrowing
 {

@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Library.Api.Tests/Library.Api.Tests.csproj" />
   <Project Path="Library.Api/Library.Api.csproj" />
+  <Project Path="Library.Domain/Library.Domain.csproj" Id="9023c3b1-e433-4380-9cb8-e0159251b656" />
 </Solution>

@@ -1,4 +1,4 @@
-namespace Library.Api.Common.Exceptions;
+namespace Library.Domain.Exceptions;
 
 public class NotFoundException : Exception
 {

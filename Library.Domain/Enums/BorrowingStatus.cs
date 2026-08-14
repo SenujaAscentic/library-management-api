@@ -1,4 +1,4 @@
-namespace Library.Api.Domain.Enums;
+namespace Library.Domain.Enums;
 
 public enum BorrowingStatus
 {

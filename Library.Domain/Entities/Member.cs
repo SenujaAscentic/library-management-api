@@ -1,4 +1,4 @@
-namespace Library.Api.Domain.Entities;
+namespace Library.Domain.Entities;
 public class Member
 {
     public Guid Id {get;set;}
