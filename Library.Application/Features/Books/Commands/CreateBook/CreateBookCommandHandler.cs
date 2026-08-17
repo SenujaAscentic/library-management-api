@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using Library.Application.Abstractions;
 using Library.Domain.Entities;
 using Library.Domain.Exceptions;
+using Library.Application.Abstractions.Repositories;
 
 namespace Library.Application.Features.Books.Commands.CreateBook;
 

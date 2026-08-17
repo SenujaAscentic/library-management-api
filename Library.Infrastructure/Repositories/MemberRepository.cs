@@ -1,7 +1,7 @@
-using Library.Api.Domain.Entities;
+using Library.Application.Abstractions.Repositories;
+using Library.Domain.Entities;
+using Library.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Library.Api.Infrastructure.Data;
-using Library.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Library.Api.Infrastructure.Repositories.Implementations;
 
