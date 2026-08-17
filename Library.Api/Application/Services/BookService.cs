@@ -1,11 +1,10 @@
 
 
 using Library.Api.Application.Interfaces;
-using Library.Api.Common.Exceptions;
+using Library.Application.Abstractions.Repositories;
+using Library.Application.Features.Books;
+using Library.Domain.Exceptions;
 using Library.Api.Contracts.Books;
-using Library.Api.Domain.Entities;
-using Library.Api.Infrastructure.Repositories.Interfaces;
-
 namespace Library.Api.Application.Services;
 public class BookService : IBookService
 {
@@ -16,35 +15,7 @@ public class BookService : IBookService
         _bookRepository = bookRepository;
     }
     
-    public async Task<BookResponse> CreateAsync(CreateBookRequest request)
-    {
-        var existingBook = await _bookRepository.GetByIsbnAsync(request.Isbn);
-        if (existingBook is not null)
-        {
-            throw new ConflictException("ISBN already exists.");
-        }
-        var book = new Book
-        {
-            Id = Guid.NewGuid(),
-            Title = request.Title,
-            Author = request.Author,
-            Isbn = request.Isbn,
-            PublishedYear = request.PublishedYear,
-            TotalCopies = request.TotalCopies,
-            AvailableCopies = request.TotalCopies
-        };
-        await _bookRepository.AddAsync(book);
-        await _bookRepository.SaveChangesAsync();
-        return new BookResponse(
-            book.Id,
-            book.Title,
-            book.Author,
-            book.Isbn,
-            book.PublishedYear,
-            book.TotalCopies,
-            book.AvailableCopies);
-    }
-
+    
     public async Task<List<BookResponse>> GetAllAsync()
     {
         var books = await _bookRepository.GetAllAsync();

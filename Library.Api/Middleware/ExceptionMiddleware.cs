@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Library.Api.Common.Exceptions;
+using Library.Domain.Exceptions;
 using Library.Api.Contracts.Common;
 
 namespace Library.Api.Middleware;

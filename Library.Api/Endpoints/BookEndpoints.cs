@@ -4,6 +4,8 @@ using Library.Api.Application.Interfaces;
 using Library.Api.Common.Validation;
 using Library.Api.Contracts.Books;
 using Library.Api.Contracts.Common;
+using Library.Application.Features.Books.Commands.CreateBook;
+using MediatR;
 
 namespace Library.Api.Endpoints;
 
@@ -11,14 +13,14 @@ public static class BookEndpoints
 {
     public static void MapBookEndpoints(this WebApplication app)
     {
-        app.MapPost("/api/books", async(CreateBookRequest request ,IValidator<CreateBookRequest> validator, IBookService service) =>
+        app.MapPost("/api/books", async (CreateBookCommand command, IValidator<CreateBookCommand> validator, IMediator mediator) =>
         {
-            var result = await ValidationHelper.ValidateAsync(request, validator);
+            var result = await ValidationHelper.ValidateAsync(command, validator);
             if (result is not null)
             {
                 return result;
             }
-            var book = await service.CreateAsync(request);
+            var book = await mediator.Send(command);
             return Results.Created($"/api/books/{book.Id}", book);
         });
         app.MapGet("/api/books", async(IBookService service) =>

@@ -1,10 +1,8 @@
-using FluentAssertions;
 using Library.Api.Application.Services;
-using Library.Api.Common.Exceptions;
 using Library.Api.Contracts.Borrowings;
-using Library.Api.Domain.Entities;
-using Library.Api.Infrastructure.Repositories.Interfaces;
-using Moq;
+using Library.Application.Abstractions.Repositories;
+using Library.Domain.Entities;
+using Library.Domain.Exceptions;
 
 namespace Library.Api.Tests.Services;
 

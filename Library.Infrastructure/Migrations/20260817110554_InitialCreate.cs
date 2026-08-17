@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Library.Api.Migrations
+namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -74,6 +74,12 @@ namespace Library.Api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Books_Isbn",
+                table: "Books",
+                column: "Isbn",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Borrowings_BookId",
                 table: "Borrowings",
                 column: "BookId");
@@ -82,6 +88,12 @@ namespace Library.Api.Migrations
                 name: "IX_Borrowings_MemberId",
                 table: "Borrowings",
                 column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Members_Email",
+                table: "Members",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />

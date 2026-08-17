@@ -1,9 +1,9 @@
 using Library.Api.Application.Interfaces;
-using Library.Api.Common.Exceptions;
 using Library.Api.Contracts.Borrowings;
-using Library.Api.Domain.Entities;
-using Library.Api.Domain.Enums;
-using Library.Api.Infrastructure.Repositories.Interfaces;
+using Library.Application.Abstractions.Repositories;
+using Library.Domain.Entities;
+using Library.Domain.Enums;
+using Library.Domain.Exceptions;
 
 namespace Library.Api.Application.Services;
 public class BorrowingService : IBorrowingService

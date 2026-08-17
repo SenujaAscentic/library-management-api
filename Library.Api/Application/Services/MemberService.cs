@@ -1,9 +1,9 @@
 using Library.Api.Application.contracts.Members;
 using Library.Api.Application.Interfaces;
-using Library.Api.Common.Exceptions;
 using Library.Api.Contracts.Members;
-using Library.Api.Domain.Entities;
-using Library.Api.Infrastructure.Repositories.Interfaces;
+using Library.Application.Abstractions.Repositories;
+using Library.Domain.Entities;
+using Library.Domain.Exceptions;
 
 namespace Library.Api.Application.Services;
 
