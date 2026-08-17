@@ -1,7 +1,7 @@
 namespace Library.Domain.Entities;
-public class Member
+public class Member : BaseEntity
 {
-    public Guid Id {get;set;}
+    
 
     public String FullName {get; set;}= string.Empty;
 

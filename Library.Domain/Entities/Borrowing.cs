@@ -2,10 +2,9 @@ using Library.Domain.Enums;
 
 namespace Library.Domain.Entities;
 
-public class Borrowing
+public class Borrowing : BaseEntity
 {
-    public Guid Id { get; set; }
-
+    
     public Guid MemberId { get; set; }
 
     public Member Member { get; set; } = null!;
