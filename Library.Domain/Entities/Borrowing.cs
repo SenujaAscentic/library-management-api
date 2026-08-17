@@ -2,7 +2,7 @@ using Library.Domain.Enums;
 
 namespace Library.Domain.Entities;
 
-public class Borrowing : BaseEntity
+public sealed class Borrowing : BaseEntity
 {
     
     public Guid MemberId { get; set; }

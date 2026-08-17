@@ -1,8 +1,6 @@
+using Library.Domain.Entities;
 
-
-using Library.Api.Domain.Entities;
-
-namespace Library.Api.Infrastructure.Repositories.Interfaces;
+namespace Library.Application.Abstractions;
 public interface IBorrowingRepository
 {
     Task<List<Borrowing>> GetAllAsync();

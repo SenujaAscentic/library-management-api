@@ -1,5 +1,5 @@
 namespace Library.Domain.Entities;
-public class Member : BaseEntity
+public sealed class Member : BaseEntity
 {
     
 

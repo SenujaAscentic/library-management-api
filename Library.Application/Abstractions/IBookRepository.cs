@@ -1,6 +1,6 @@
-using Library.Api.Domain.Entities;
+using Library.Domain.Entities;
 
-namespace Library.Api.Infrastructure.Repositories.Interfaces;
+namespace Library.Application.Abstractions;
 public interface IBookRepository
 {
     Task<List<Book>> GetAllAsync();
