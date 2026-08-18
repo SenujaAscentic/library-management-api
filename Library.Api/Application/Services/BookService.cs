@@ -16,18 +16,7 @@ public class BookService : IBookService
     }
     
     
-    public async Task<List<BookResponse>> GetAllAsync()
-    {
-        var books = await _bookRepository.GetAllAsync();
-        return books.Select(book => new BookResponse(
-            book.Id,
-            book.Title,
-            book.Author,
-            book.Isbn,
-            book.PublishedYear,
-            book.TotalCopies,
-            book.AvailableCopies)).ToList();
-    }
+   
 
     
     public async Task UpdateAsync(Guid id, UpdateBookRequest request)

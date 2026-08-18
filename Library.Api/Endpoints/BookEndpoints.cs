@@ -5,6 +5,8 @@ using Library.Api.Common.Validation;
 using Library.Api.Contracts.Books;
 using Library.Api.Contracts.Common;
 using Library.Application.Features.Books.Commands.CreateBook;
+using Library.Application.Features.Books.Commands.DeleteBook;
+using Library.Application.Features.Books.Queries.GetAllBooks;
 using Library.Application.Features.Books.Queries.GetBookById;
 using MediatR;
 
@@ -24,9 +26,9 @@ public static class BookEndpoints
             var book = await mediator.Send(command);
             return Results.Created($"/api/books/{book.Id}", book);
         });
-        app.MapGet("/api/books", async(IBookService service) =>
+        app.MapGet("/api/books", async(IMediator mediator) =>
         {
-            var books = await service.GetAllAsync();
+            var books = await mediator.Send(new GetAllBooksQuery());
             return Results.Ok(books);
         });
         app.MapGet("/api/books/{id:guid}", async(Guid id, IMediator mediator) =>
@@ -46,9 +48,9 @@ public static class BookEndpoints
             await service.UpdateAsync(id, request);
             return Results.NoContent();
         });
-        app.MapDelete("/api/books/{id:guid}", async(Guid id, IBookService service) =>
+        app.MapDelete("/api/books/{id:guid}", async(Guid id, IMediator mediator) =>
         {
-            await service.DeleteAsync(id);
+            await mediator.Send(new DeleteBookCommand(id));
             return Results.NoContent();
         });
     }

@@ -6,7 +6,7 @@ namespace Library.Api.Application.Interfaces;
 
 public interface IBookService
 {
-    Task<List<BookResponse>> GetAllAsync();
+    
     
     Task UpdateAsync(Guid id, UpdateBookRequest request);
     Task DeleteAsync(Guid id);
