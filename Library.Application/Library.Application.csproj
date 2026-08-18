@@ -16,8 +16,4 @@
     <ProjectReference Include="..\Library.Domain\Library.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Books\Queries\" />
-  </ItemGroup>
-
 </Project>

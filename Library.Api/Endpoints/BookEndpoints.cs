@@ -5,6 +5,7 @@ using Library.Api.Common.Validation;
 using Library.Api.Contracts.Books;
 using Library.Api.Contracts.Common;
 using Library.Application.Features.Books.Commands.CreateBook;
+using Library.Application.Features.Books.Queries.GetBookById;
 using MediatR;
 
 namespace Library.Api.Endpoints;
@@ -28,9 +29,10 @@ public static class BookEndpoints
             var books = await service.GetAllAsync();
             return Results.Ok(books);
         });
-        app.MapGet("/api/books/{id:guid}", async(Guid id, IBookService service) =>
+        app.MapGet("/api/books/{id:guid}", async(Guid id, IMediator mediator) =>
         {
-            var book = await service.GetByIdAsync(id);
+            var query = new GetBookByIdQuery(id);
+            var book = await mediator.Send(query);
             return Results.Ok(book);
            
         });

@@ -29,22 +29,7 @@ public class BookService : IBookService
             book.AvailableCopies)).ToList();
     }
 
-    public async Task<BookResponse> GetByIdAsync(Guid id)
-    {
-        var book = await _bookRepository.GetByIdAsync(id);
-        if (book is null)
-        {
-            throw new NotFoundException("Book not found.");
-        }
-        return new BookResponse(
-            book.Id,
-            book.Title,
-            book.Author,
-            book.Isbn,
-            book.PublishedYear,
-            book.TotalCopies,
-            book.AvailableCopies);
-    }
+    
     public async Task UpdateAsync(Guid id, UpdateBookRequest request)
     {
         var book = await _bookRepository.GetByIdAsync(id);

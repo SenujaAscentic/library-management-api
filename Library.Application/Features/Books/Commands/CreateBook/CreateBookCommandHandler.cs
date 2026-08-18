@@ -3,11 +3,12 @@ using Microsoft.Extensions.Logging;
 using Library.Domain.Entities;
 using Library.Domain.Exceptions;
 using Library.Application.Abstractions.Repositories;
+using Library.Application.Abstractions.Messaging;
 
 namespace Library.Application.Features.Books.Commands.CreateBook;
 
 public class CreateBookCommandHandler(IBookRepository bookRepository, ILogger<CreateBookCommandHandler> logger)
-    : IRequestHandler<CreateBookCommand, BookResponse>
+    : ICommandHandler<CreateBookCommand, BookResponse>
 {
     public async Task<BookResponse> Handle(CreateBookCommand request, CancellationToken cancellationToken)
     {
