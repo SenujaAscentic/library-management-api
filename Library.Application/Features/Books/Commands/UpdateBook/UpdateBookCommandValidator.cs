@@ -1,12 +1,10 @@
-using FluentValidation;
-using Library.Api.Contracts.Books;
+﻿using FluentValidation;
 
-namespace Library.Api.Validators;
+namespace Library.Application.Features.Books.Commands.UpdateBook;
 
-public class UpdateBookRequestValidator
-    : AbstractValidator<UpdateBookRequest>
-{
-    public UpdateBookRequestValidator()
+    public class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
+    {
+         public UpdateBookCommandValidator()
     {
         RuleFor(x => x.Title)
             .NotEmpty();
@@ -23,4 +21,7 @@ public class UpdateBookRequestValidator
         RuleFor(x => x.PublishedYear)
             .LessThanOrEqualTo(DateTime.UtcNow.Year);
     }
+
+
 }
+

@@ -1,4 +1,4 @@
-﻿namespace Library.Api.Contracts.Books;
+﻿namespace Library.Application.Features.Books.Commands.UpdateBook;
 
 public record UpdateBookRequest(
     string Title,

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Library.Application.Abstractions.Repositories;
 
 
-namespace Library.Api.Infrastructure.Repositories.Implementations;
+namespace Library.Infrastructure.Repositories;
 
 public class BorrowingRepository : IBorrowingRepository
 {

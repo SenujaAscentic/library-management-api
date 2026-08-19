@@ -3,7 +3,7 @@ using Library.Domain.Entities;
 using Library.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Library.Api.Infrastructure.Repositories.Implementations;
+namespace Library.Infrastructure.Repositories;
 
 public class MemberRepository : IMemberRepository
 {

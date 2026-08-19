@@ -2,13 +2,13 @@ using FluentValidation;
 using Library.Api.Application.Interfaces;
 using Library.Api.Application.Services;
 using Library.Api.Endpoints;
-using Library.Api.Infrastructure.Repositories.Implementations;
 using Library.Api.Middleware;
 using Library.Api.Validators;
 using Library.Application.Abstractions.Repositories;
 using Library.Application.Features.Books.Commands.CreateBook;
+using Library.Application.Features.Books.Commands.UpdateBook;
 using Library.Infrastructure.Data;
-//using Library.Infrastructure.Repositories;
+using Library.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,18 +28,16 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
-// Application Services (still needed for un-converted endpoints)
-builder.Services.AddScoped<IBookService, BookService>();
+// Application Services (still needed for un-converted Member/Borrowing endpoints)
 builder.Services.AddScoped<IBorrowingService, BorrowingService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 
 // MediatR — scans Library.Application for all commands/queries/handlers
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBookCommand).Assembly));
 
-// Validators — old ones still in Api, new ones now in Application
-builder.Services.AddValidatorsFromAssemblyContaining<CreateBookCommandValidator>(); // Application assembly
-builder.Services.AddValidatorsFromAssemblyContaining<UpdateBookRequestValidator>(); // old Api-assembly validators
-builder.Services.AddValidatorsFromAssemblyContaining<CreateMemberRequestValidator>();
+// Validators
+builder.Services.AddValidatorsFromAssemblyContaining<CreateBookCommandValidator>(); // Application assembly (Books)
+builder.Services.AddValidatorsFromAssemblyContaining<CreateMemberRequestValidator>(); // Api assembly (Members/Borrowings, still old)
 builder.Services.AddValidatorsFromAssemblyContaining<UpdateMemberRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<BorrowBookRequestValidator>();
 

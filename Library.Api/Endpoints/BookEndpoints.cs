@@ -1,11 +1,9 @@
 
 using FluentValidation;
-using Library.Api.Application.Interfaces;
 using Library.Api.Common.Validation;
-using Library.Api.Contracts.Books;
-using Library.Api.Contracts.Common;
 using Library.Application.Features.Books.Commands.CreateBook;
 using Library.Application.Features.Books.Commands.DeleteBook;
+using Library.Application.Features.Books.Commands.UpdateBook;
 using Library.Application.Features.Books.Queries.GetAllBooks;
 using Library.Application.Features.Books.Queries.GetBookById;
 using MediatR;
@@ -38,15 +36,16 @@ public static class BookEndpoints
             return Results.Ok(book);
            
         });
-        app.MapPut("/api/books/{id:guid}", async(Guid id, UpdateBookRequest request,IValidator<UpdateBookRequest> validator, IBookService service) =>
+        app.MapPut("/api/books/{id:guid}", async (Guid id, UpdateBookRequest body, IMediator mediator, IValidator<UpdateBookCommand> validator) =>
         {
-            var result = await ValidationHelper.ValidateAsync(request, validator);
+            var command = new UpdateBookCommand(id, body.Title, body.Author, body.Isbn, body.PublishedYear, body.TotalCopies);
+            var result = await ValidationHelper.ValidateAsync(command, validator);
             if (result is not null)
             {
                 return result;
             }
-            await service.UpdateAsync(id, request);
-            return Results.NoContent();
+            var book = await mediator.Send(command);
+            return Results.Ok(book);
         });
         app.MapDelete("/api/books/{id:guid}", async(Guid id, IMediator mediator) =>
         {

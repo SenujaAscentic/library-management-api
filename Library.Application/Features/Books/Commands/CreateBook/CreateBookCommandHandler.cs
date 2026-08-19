@@ -10,24 +10,24 @@ namespace Library.Application.Features.Books.Commands.CreateBook;
 public class CreateBookCommandHandler(IBookRepository bookRepository, ILogger<CreateBookCommandHandler> logger)
     : ICommandHandler<CreateBookCommand, BookResponse>
 {
-    public async Task<BookResponse> Handle(CreateBookCommand request, CancellationToken cancellationToken)
+    public async Task<BookResponse> Handle(CreateBookCommand command, CancellationToken cancellationToken)
     {
-        var existingBook = await bookRepository.GetByIsbnAsync(request.Isbn);
+        var existingBook = await bookRepository.GetByIsbnAsync(command.Isbn);
         if (existingBook is not null)
         {
-            logger.LogWarning("Create book rejected: ISBN {Isbn} already exists", request.Isbn);
+            logger.LogWarning("Create book rejected: ISBN {Isbn} already exists", command.Isbn);
             throw new ConflictException("ISBN already exists.");
         }
 
         var book = new Book
         {
             Id = Guid.NewGuid(),
-            Title = request.Title,
-            Author = request.Author,
-            Isbn = request.Isbn,
-            PublishedYear = request.PublishedYear,
-            TotalCopies = request.TotalCopies,
-            AvailableCopies = request.TotalCopies
+            Title = command.Title,
+            Author = command.Author,
+            Isbn = command.Isbn,
+            PublishedYear = command.PublishedYear,
+            TotalCopies = command.TotalCopies,
+            AvailableCopies = command.TotalCopies
         };
 
         await bookRepository.AddAsync(book);
