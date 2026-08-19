@@ -30,15 +30,13 @@ builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
 // Application Services (still needed for un-converted Member/Borrowing endpoints)
 builder.Services.AddScoped<IBorrowingService, BorrowingService>();
-builder.Services.AddScoped<IMemberService, MemberService>();
+
 
 // MediatR — scans Library.Application for all commands/queries/handlers
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateBookCommand).Assembly));
 
 // Validators
 builder.Services.AddValidatorsFromAssemblyContaining<CreateBookCommandValidator>(); // Application assembly (Books)
-builder.Services.AddValidatorsFromAssemblyContaining<CreateMemberRequestValidator>(); // Api assembly (Members/Borrowings, still old)
-builder.Services.AddValidatorsFromAssemblyContaining<UpdateMemberRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<BorrowBookRequestValidator>();
 
 var app = builder.Build();

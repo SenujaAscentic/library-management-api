@@ -1,4 +1,4 @@
-namespace Library.Api.Contracts.Members;
+namespace Library.Application.Features.Members;
 
 public record MemberResponse(
     Guid Id,
