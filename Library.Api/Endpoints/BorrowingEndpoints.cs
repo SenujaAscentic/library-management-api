@@ -1,7 +1,8 @@
-using Library.Api.Application.Interfaces;
 using Library.Api.Common.ErrorHandling;
 using Library.Application.Features.Borrowings.Commands.BorrowBook;
 using Library.Application.Features.Borrowings.Commands.ReturnBook;
+using Library.Application.Features.Borrowings.Queries.GetAllBorrowings;
+using Library.Application.Features.Borrowings.Queries.GetBorrowingsByMember;
 using MediatR;
 
 namespace Library.Api.Endpoints;
@@ -18,14 +19,16 @@ public static class BorrowingEndpoints
             : result.Error.ToProblemDetails();
 
         });
-        app.MapGet("/api/borrowings", async(IBorrowingService service) =>
+        app.MapGet("/api/borrowings", async(IMediator mediator) =>
         {
-           
-            return Results.Ok(await service.GetAllAsync());
+            var borrowings = await mediator.Send(new GetAllBorrowingsQuery());
+
+            return Results.Ok(borrowings);
         });
-        app.MapGet("/api/borrowings/{memberId:guid}", async(Guid memberId, IBorrowingService service) =>
+        app.MapGet("/api/members/{memberId:guid}/borrowings", async (Guid memberId, IMediator mediator) =>
         {
-            return Results.Ok(await service.GetByMemberAsync(memberId));
+            var borrowings = await mediator.Send(new GetBorrowingsByMemberQuery(memberId));
+            return Results.Ok(borrowings);
         });
         app.MapPost("/api/borrowings/{id:guid}/return", async(Guid id, IMediator mediator) =>
         {

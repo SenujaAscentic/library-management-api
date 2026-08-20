@@ -1,9 +1,6 @@
 using FluentValidation;
-using Library.Api.Application.Interfaces;
-using Library.Api.Application.Services;
 using Library.Api.Endpoints;
 using Library.Api.Middleware;
-using Library.Api.Validators;
 using Library.Application.Abstractions.Repositories;
 using Library.Application.Features.Books.Commands.CreateBook;
 using Library.Application.Features.Books.Commands.UpdateBook;
@@ -28,8 +25,7 @@ builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 
-// Application Services (still needed for un-converted Member/Borrowing endpoints)
-builder.Services.AddScoped<IBorrowingService, BorrowingService>();
+
 
 
 // MediatR — scans Library.Application for all commands/queries/handlers
@@ -37,7 +33,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Creat
 
 // Validators
 builder.Services.AddValidatorsFromAssemblyContaining<CreateBookCommandValidator>(); // Application assembly (Books)
-builder.Services.AddValidatorsFromAssemblyContaining<BorrowBookRequestValidator>();
+
 
 var app = builder.Build();
 
