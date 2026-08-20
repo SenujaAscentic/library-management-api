@@ -33,6 +33,10 @@ public class BorrowingRepository : IBorrowingRepository
             .Where(x => x.MemberId == memberId && x.Status == BorrowingStatus.Borrowed)
             .ToListAsync();
     }
+    public async Task<bool> HasActiveBorrowingForBookAsync(Guid bookId)
+    {
+        return await _db.Borrowings.AnyAsync(x => x.BookId == bookId && x.Status == BorrowingStatus.Borrowed);
+    }
     public async Task AddAsync(Borrowing borrowing)
     {
         await _db.Borrowings.AddAsync(borrowing);

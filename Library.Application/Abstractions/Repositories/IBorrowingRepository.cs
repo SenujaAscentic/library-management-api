@@ -9,6 +9,7 @@ public interface IBorrowingRepository
     Task<List<Borrowing>> GetByMemberIdAsync(Guid memberId);
 
     Task<List<Borrowing>> GetActiveBorrowingsByMemberAsync(Guid memberId);
+    Task<bool> HasActiveBorrowingForBookAsync(Guid bookId);
     Task AddAsync(Borrowing borrowing);
     void Update(Borrowing borrowing);
     void Delete(Borrowing borrowing);

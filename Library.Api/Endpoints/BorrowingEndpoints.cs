@@ -1,6 +1,7 @@
 using Library.Api.Application.Interfaces;
 using Library.Api.Common.ErrorHandling;
-using Library.Application.Features.Borrowings.Commands;
+using Library.Application.Features.Borrowings.Commands.BorrowBook;
+using Library.Application.Features.Borrowings.Commands.ReturnBook;
 using MediatR;
 
 namespace Library.Api.Endpoints;
@@ -26,10 +27,12 @@ public static class BorrowingEndpoints
         {
             return Results.Ok(await service.GetByMemberAsync(memberId));
         });
-        app.MapPost("/api/borrowings/{id:guid}/return", async(Guid id, IBorrowingService service) =>
+        app.MapPost("/api/borrowings/{id:guid}/return", async(Guid id, IMediator mediator) =>
         {
-            await service.ReturnAsync(id);
-            return Results.NoContent();
+            var result = await mediator.Send(new ReturnBookCommand(id));
+            return result.IsSuccess
+            ? Results.Ok(result.Value)
+            : result.Error.ToProblemDetails();
         });
 
     }
