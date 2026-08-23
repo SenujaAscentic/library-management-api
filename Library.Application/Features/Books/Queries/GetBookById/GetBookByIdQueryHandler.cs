@@ -12,7 +12,7 @@ namespace Library.Application.Features.Books.Queries.GetBookById
             var book = await bookRepository.GetByIdAsync(request.Id);
             if (book is null)
             {
-                throw new NotFoundException("Book not found.");
+                throw new NotFoundException("book_not_found","Book not found.");
             }
             return new BookResponse(
                 book.Id,

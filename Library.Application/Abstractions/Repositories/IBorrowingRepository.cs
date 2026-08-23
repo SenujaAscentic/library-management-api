@@ -13,6 +13,6 @@ public interface IBorrowingRepository
     Task AddAsync(Borrowing borrowing);
     void Update(Borrowing borrowing);
     void Delete(Borrowing borrowing);
-    Task SaveChangesAsync();
+    
 
 }

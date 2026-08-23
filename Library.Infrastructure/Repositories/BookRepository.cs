@@ -46,8 +46,5 @@ public class BookRepository : IBookRepository
         _db.Books.Remove(book);
     }
 
-    public async Task SaveChangesAsync()
-    {
-        await _db.SaveChangesAsync();
-    }
+    
 }

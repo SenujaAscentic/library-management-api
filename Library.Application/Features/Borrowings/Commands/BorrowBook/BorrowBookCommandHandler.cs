@@ -1,4 +1,5 @@
-﻿using Library.Application.Abstractions.Messaging;
+﻿using Library.Application.Abstractions;
+using Library.Application.Abstractions.Messaging;
 using Library.Application.Abstractions.Repositories;
 using Library.Application.Abstractions.Results;
 using Library.Domain.Entities;
@@ -11,6 +12,7 @@ public class BorrowBookCommandHandler(
     IBookRepository bookRepository,
     IMemberRepository memberRepository,
     IBorrowingRepository borrowingRepository,
+    IUnitOfWork unitOfWork,
     ILogger<BorrowBookCommandHandler> logger)
     : ICommandHandler<BorrowBookCommand, Result<BorrowingResponse>>
 {
@@ -49,21 +51,13 @@ public class BorrowBookCommandHandler(
             return Result<BorrowingResponse>.Failure(BorrowingErrors.BorrowingLimitExceeded);
         }
 
-        var borrowing = new Borrowing
-        {
-            Id = Guid.NewGuid(),
-            BookId = book.Id,
-            MemberId = member.Id,
-            BorrowedDate = DateTime.UtcNow,
-            DueDate = DateTime.UtcNow.AddDays(14),
-            Status = BorrowingStatus.Borrowed
-        };
+        var borrowing = Borrowing.Create(member.Id, book.Id);
 
-        book.AvailableCopies--;
+        book.DecrementAvailableCopies();
 
         await borrowingRepository.AddAsync(borrowing);
         bookRepository.Update(book);
-        await borrowingRepository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Book {BookId} borrowed by member {MemberId}, due {DueDate}", book.Id, member.Id, borrowing.DueDate);
 

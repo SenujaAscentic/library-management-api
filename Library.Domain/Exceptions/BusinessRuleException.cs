@@ -1,8 +1,10 @@
 namespace Library.Domain.Exceptions;
 
-public class BusinessRuleException : Exception
+public sealed class BusinessRuleException : Exception
 {
-    public BusinessRuleException(string message) : base(message)
+    public string Code { get;}
+    public BusinessRuleException(string code ,string message) : base(message)
     {
+        Code = code;
     }
 }

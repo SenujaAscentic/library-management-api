@@ -11,5 +11,5 @@ public interface IMemberRepository
     Task AddAsync(Member member);
     void Update(Member member);
     void Delete(Member member);
-    Task SaveChangesAsync();
+    
 }

@@ -20,6 +20,6 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
             .GreaterThan(0);
         
         RuleFor(x => x.PublishedYear)
-            .LessThanOrEqualTo(DateTime.Now.Year);
+            .LessThanOrEqualTo(DateTime.UtcNow.Year);
     }
 }

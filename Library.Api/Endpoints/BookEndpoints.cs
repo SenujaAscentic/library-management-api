@@ -14,9 +14,9 @@ public static class BookEndpoints
 {
     public static void MapBookEndpoints(this WebApplication app)
     {
-        app.MapPost("/api/books", async (CreateBookCommand command, IValidator<CreateBookCommand> validator, IMediator mediator) =>
+        app.MapPost("/api/books", async (CreateBookCommand command, IValidator<CreateBookCommand> validator, IMediator mediator, HttpContext httpContext) =>
         {
-            var result = await ValidationHelper.ValidateAsync(command, validator);
+            var result = await ValidationHelper.ValidateAsync(command, validator, httpContext);
             if (result is not null)
             {
                 return result;
@@ -36,10 +36,10 @@ public static class BookEndpoints
             return Results.Ok(book);
            
         });
-        app.MapPut("/api/books/{id:guid}", async (Guid id, UpdateBookRequest body, IMediator mediator, IValidator<UpdateBookCommand> validator) =>
+        app.MapPut("/api/books/{id:guid}", async (Guid id, UpdateBookRequest body, IMediator mediator, IValidator<UpdateBookCommand> validator , HttpContext httpContext) =>
         {
             var command = new UpdateBookCommand(id, body.Title, body.Author, body.Isbn, body.PublishedYear, body.TotalCopies);
-            var result = await ValidationHelper.ValidateAsync(command, validator);
+            var result = await ValidationHelper.ValidateAsync(command, validator, httpContext);
             if (result is not null)
             {
                 return result;

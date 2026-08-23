@@ -45,10 +45,6 @@ public class MemberRepository : IMemberRepository
         _db.Members.Remove(member);
     }
 
-    public async Task SaveChangesAsync()
-    {
-        await _db.SaveChangesAsync();
-    }
-
+    
   
 }

@@ -13,9 +13,9 @@ public static class MemberEndpoints
 {
     public static void MapMemberEndpoints(this WebApplication app)
     {
-        app.MapPost("/api/members", async (CreateMemberCommand command, IValidator<CreateMemberCommand> validator, IMediator mediator) =>
+        app.MapPost("/api/members", async (CreateMemberCommand command, IValidator<CreateMemberCommand> validator, IMediator mediator, HttpContext httpContext) =>
         {
-            var result = await ValidationHelper.ValidateAsync(command, validator);
+            var result = await ValidationHelper.ValidateAsync(command, validator, httpContext);
             if (result is not null) return result;
             var member = await mediator.Send(command);
             return Results.Created($"/api/members/{member.Id}", member);
@@ -33,16 +33,16 @@ public static class MemberEndpoints
             return Results.Ok(member);
         });
 
-        app.MapPut("/api/members/{id:guid}", async (Guid id, UpdateMemberRequest body, IValidator<UpdateMemberCommand> validator, IMediator mediator) =>
+        app.MapPut("/api/members/{id:guid}", async (Guid id, UpdateMemberRequest body, IValidator<UpdateMemberCommand> validator, IMediator mediator, HttpContext httpContext) =>
         {
             var command = new UpdateMemberCommand(id, body.FullName, body.Email, body.PhoneNumber);
-            var result = await ValidationHelper.ValidateAsync(command, validator);
+            var result = await ValidationHelper.ValidateAsync(command, validator, httpContext);
             if (result is not null) return result;
             var member = await mediator.Send(command);
             return Results.Ok(member);
         });
 
-        app.MapDelete("/api/members/{id:guid}", async (Guid id, IMediator mediator) =>
+        app.MapDelete("/api/members/{id:guid}", async (Guid id, IMediator mediator, HttpContext httpContex) =>
         {
             await mediator.Send(new DeleteMemberCommand(id));
             return Results.NoContent();

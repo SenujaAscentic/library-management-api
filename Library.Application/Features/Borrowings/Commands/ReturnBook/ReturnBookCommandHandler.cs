@@ -1,4 +1,5 @@
-﻿using Library.Application.Abstractions.Messaging;
+﻿using Library.Application.Abstractions;
+using Library.Application.Abstractions.Messaging;
 using Library.Application.Abstractions.Repositories;
 using Library.Application.Abstractions.Results;
 using Library.Domain.Enums;
@@ -9,6 +10,7 @@ namespace Library.Application.Features.Borrowings.Commands.ReturnBook;
 public class ReturnBookCommandHandler(
     IBorrowingRepository borrowingRepository,
     IBookRepository bookRepository,
+    IUnitOfWork unitOfWork,
     ILogger<ReturnBookCommandHandler> logger)
     : ICommandHandler<ReturnBookCommand, Result<BorrowingResponse>>
 {
@@ -34,13 +36,12 @@ public class ReturnBookCommandHandler(
             return Result<BorrowingResponse>.Failure(BorrowingErrors.BookNotFound);
         }
 
-        borrowing.ReturnedDate = DateTime.UtcNow;
-        borrowing.Status = BorrowingStatus.Returned;
-        book.AvailableCopies++;
+        borrowing.MarkAsReturned();
+        book.IncrementAvailableCopies();
 
         borrowingRepository.Update(borrowing);
         bookRepository.Update(book);
-        await borrowingRepository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Borrowing {BorrowingId} returned, book {BookId} now has {AvailableCopies} available",
             borrowing.Id, book.Id, book.AvailableCopies);

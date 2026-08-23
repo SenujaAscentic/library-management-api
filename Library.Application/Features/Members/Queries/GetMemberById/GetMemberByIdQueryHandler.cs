@@ -12,7 +12,7 @@ public class GetMemberByIdQueryHandler(IMemberRepository memberRepository)
         var member = await memberRepository.GetByIdAsync(request.Id);
         if (member is null)
         {
-            throw new NotFoundException("Member not found.");
+            throw new NotFoundException("member_not_found", "Member not found.");
         }
 
         return new MemberResponse(member.Id, member.FullName, member.Email, member.PhoneNumber, member.RegisteredDate, member.IsActive);

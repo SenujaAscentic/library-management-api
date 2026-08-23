@@ -1,72 +1,60 @@
 using System.Text.Json;
 using Library.Domain.Exceptions;
-using Library.Api.Contracts.Common;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Middleware;
 
-public class ExceptionMiddleware
+public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-
-    public ExceptionMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (NotFoundException ex)
         {
-            await WriteError(
-                context,
-                StatusCodes.Status404NotFound,
-                ex.Message);
+            logger.LogWarning(ex, "Not found: {Code} — {Message}", ex.Code, ex.Message);
+            await WriteProblemDetails(context, StatusCodes.Status404NotFound, "Not Found", ex.Message, ex.Code);
         }
         catch (ConflictException ex)
         {
-            await WriteError(
-                context,
-                StatusCodes.Status409Conflict,
-                ex.Message);
+            logger.LogWarning(ex, "Conflict: {Code} — {Message}", ex.Code, ex.Message);
+            await WriteProblemDetails(context, StatusCodes.Status409Conflict, "Conflict", ex.Message, ex.Code);
         }
         catch (BusinessRuleException ex)
         {
-            await WriteError(
-                context,
-                StatusCodes.Status400BadRequest,
-                ex.Message);
+            logger.LogWarning(ex, "Business rule rejected: {Code} — {Message}", ex.Code, ex.Message);
+            await WriteProblemDetails(context, StatusCodes.Status400BadRequest, "Bad Request", ex.Message, ex.Code);
         }
         catch (Exception ex)
         {
-            await WriteError(
+            logger.LogError(ex, "Unhandled exception on {Method} {Path}", context.Request.Method, context.Request.Path);
+            await WriteProblemDetails(
                 context,
                 StatusCodes.Status500InternalServerError,
-                ex.Message);
+                "Internal Server Error",
+                "An unexpected error occurred. Please contact support and reference the trace ID.",
+                "internal_server_error");
         }
     }
 
-    private static async Task WriteError(
-        HttpContext context,
-        int statusCode,
-        string message)
+    private static async Task WriteProblemDetails(HttpContext context, int statusCode, string title, string detail, string code)
     {
-        context.Response.ContentType =
-            "application/json";
+        var problemDetails = new ProblemDetails
+        {
+            Status = statusCode,
+            Title = title,
+            Detail = detail,
+            Instance = context.Request.Path
+        };
 
-        context.Response.StatusCode =
-            statusCode;
+        problemDetails.Extensions["code"] = code;
+        problemDetails.Extensions["traceId"] = context.TraceIdentifier;
 
-        var response =
-            new ErrorResponse(
-                statusCode,
-                message,
-                context.TraceIdentifier);
+        context.Response.ContentType = "application/problem+json";
+        context.Response.StatusCode = statusCode;
 
-        await context.Response.WriteAsync(
-            JsonSerializer.Serialize(response));
+        await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
     }
 }

@@ -1,3 +1,5 @@
+ namespace Library.Application.Features.Borrowings;
+
 public record BorrowingResponse(
     Guid Id,
     Guid BookId,

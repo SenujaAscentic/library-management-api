@@ -4,10 +4,11 @@ using Library.Domain.Entities;
 using Library.Domain.Exceptions;
 using Library.Application.Abstractions.Repositories;
 using Library.Application.Abstractions.Messaging;
+using Library.Application.Abstractions;
 
 namespace Library.Application.Features.Books.Commands.CreateBook;
 
-public class CreateBookCommandHandler(IBookRepository bookRepository, ILogger<CreateBookCommandHandler> logger)
+public class CreateBookCommandHandler(IBookRepository bookRepository,IUnitOfWork unitOfWork, ILogger<CreateBookCommandHandler> logger)
     : ICommandHandler<CreateBookCommand, BookResponse>
 {
     public async Task<BookResponse> Handle(CreateBookCommand command, CancellationToken cancellationToken)
@@ -16,22 +17,13 @@ public class CreateBookCommandHandler(IBookRepository bookRepository, ILogger<Cr
         if (existingBook is not null)
         {
             logger.LogWarning("Create book rejected: ISBN {Isbn} already exists", command.Isbn);
-            throw new ConflictException("ISBN already exists.");
+            throw new ConflictException("duplicate_isbn", "The provided ISBN is already in use.");
         }
 
-        var book = new Book
-        {
-            Id = Guid.NewGuid(),
-            Title = command.Title,
-            Author = command.Author,
-            Isbn = command.Isbn,
-            PublishedYear = command.PublishedYear,
-            TotalCopies = command.TotalCopies,
-            AvailableCopies = command.TotalCopies
-        };
+        var book = Book.Create(command.Title, command.Author, command.Isbn, command.PublishedYear, command.TotalCopies);
 
         await bookRepository.AddAsync(book);
-        await bookRepository.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Book created: {BookId} with ISBN {Isbn}", book.Id, book.Isbn);
 

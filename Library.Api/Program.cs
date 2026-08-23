@@ -1,9 +1,11 @@
 using FluentValidation;
 using Library.Api.Endpoints;
 using Library.Api.Middleware;
+using Library.Application.Abstractions;
 using Library.Application.Abstractions.Repositories;
 using Library.Application.Features.Books.Commands.CreateBook;
 using Library.Application.Features.Books.Commands.UpdateBook;
+using Library.Infrastructure;
 using Library.Infrastructure.Data;
 using Library.Infrastructure.Repositories;
 using MediatR;
@@ -24,6 +26,7 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBorrowingRepository, BorrowingRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 

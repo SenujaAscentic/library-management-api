@@ -1,23 +1,40 @@
-using Library.Domain.Enums;
-
 namespace Library.Domain.Entities;
+
+using Library.Domain.Enums;
+using Library.Domain.Exceptions;
 
 public sealed class Borrowing : BaseEntity
 {
-    
-    public Guid MemberId { get; set; }
+    public Guid MemberId { get; private set; }
+    public Member Member { get; private set; } = null!;
+    public Guid BookId { get; private set; }
+    public Book Book { get; private set; } = null!;
+    public DateTime BorrowedDate { get; private set; }
+    public DateTime DueDate { get; private set; }
+    public DateTime? ReturnedDate { get; private set; }
+    public BorrowingStatus Status { get; private set; }
 
-    public Member Member { get; set; } = null!;
+    private Borrowing() { } // EF Core
 
-    public Guid BookId { get; set; }
+    public static Borrowing Create(Guid memberId, Guid bookId)
+    {
+        var borrowedDate = DateTime.UtcNow;
+        return new Borrowing
+        {
+            Id = Guid.NewGuid(),
+            MemberId = memberId,
+            BookId = bookId,
+            BorrowedDate = borrowedDate,
+            DueDate = borrowedDate.AddDays(14),
+            Status = BorrowingStatus.Borrowed
+        };
+    }
 
-    public Book Book { get; set; } = null!;
+    public void MarkAsReturned()
+    {
+        
 
-    public DateTime BorrowedDate { get; set; }
-
-    public DateTime DueDate { get; set; }
-
-    public DateTime? ReturnedDate { get; set; }
-
-    public BorrowingStatus Status { get; set; }
+        ReturnedDate = DateTime.UtcNow;
+        Status = BorrowingStatus.Returned;
+    }
 }
