@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
 
 namespace Library.Api.Common.Validation;
 
@@ -27,7 +28,7 @@ public static class ValidationHelper
             extensions: new Dictionary<string, object?>
             {
                 ["code"] = "validation_failed",
-                ["traceId"] = httpContext.TraceIdentifier
+                ["traceId"] = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier
             });
     }
 }

@@ -1,5 +1,6 @@
 ﻿// Library.Api/Common/ErrorHandling/ProblemDetailsHelper.cs
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Library.Api.Common.ErrorHandling;
 
@@ -16,7 +17,7 @@ public static class ProblemDetailsHelper
         };
 
         problemDetails.Extensions["code"] = code;
-        problemDetails.Extensions["traceId"] = httpContext.TraceIdentifier;
+        problemDetails.Extensions["traceId"] = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier;
 
         return Results.Json(problemDetails, statusCode: statusCode, contentType: "application/problem+json");
     }

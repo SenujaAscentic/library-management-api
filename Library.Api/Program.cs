@@ -13,17 +13,13 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
-var connectionString = builder.Configuration.GetConnectionString("LibraryDb")
-    ?? throw new InvalidOperationException("Connection string 'LibraryDb' is missing from configuration.");
 
-builder.Services.AddDbContext<LibraryDbContext>(options =>
-{
-    options.UseNpgsql(connectionString);
-});
+builder.AddNpgsqlDbContext<LibraryDbContext>("libraryDb");
 
 // Repositories
 builder.Services.AddScoped<IBookRepository, BookRepository>();
@@ -37,14 +33,17 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Creat
 // Validators — scans the whole Library.Application assembly (Books + Members; Borrowings has none by design)
 builder.Services.AddValidatorsFromAssemblyContaining<CreateBookCommandValidator>();
 
-// Health checks
-builder.Services.AddHealthChecks()
-    .AddNpgSql(connectionString, name: "postgresql");
 
 var app = builder.Build();
 
+
+
 if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+    await dbContext.Database.MigrateAsync();
+
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();

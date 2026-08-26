@@ -1,7 +1,9 @@
 <Solution>
   <Project Path="Library.Api.Tests/Library.Api.Tests.csproj" />
   <Project Path="Library.Api/Library.Api.csproj" />
+  <Project Path="Library.AppHost/Library.AppHost.csproj" Id="5bcbe576-776c-4e99-bd7a-68053af29f3f" />
   <Project Path="Library.Application/Library.Application.csproj" Id="19c7f350-d467-43e3-9d39-b399f3e80e81" />
   <Project Path="Library.Domain/Library.Domain.csproj" Id="9023c3b1-e433-4380-9cb8-e0159251b656" />
   <Project Path="Library.Infrastructure/Library.Infrastructure.csproj" Id="3342238a-a2d4-4ee5-9730-8a0f352a867f" />
+  <Project Path="Library.ServiceDefaults/Library.ServiceDefaults.csproj" Id="6b69f48c-d638-4ff9-a03b-aaf9d9e41cfe" />
 </Solution>
