@@ -3,7 +3,7 @@ using Library.Application.Abstractions.Results;
 
 namespace Library.Application.Features.Borrowings.Commands.ReturnBook
 {
-    public record ReturnBookCommand(Guid BorrowingId): ICommand<Result<BorrowingResponse>>
+    public record ReturnBookCommand(Guid BorrowingId , Guid? RequestingMemberId): ICommand<Result<BorrowingResponse>>
     {
 
     }

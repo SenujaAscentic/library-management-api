@@ -13,6 +13,7 @@ public static class ErrorExtensions
             ErrorType.NotFound => (StatusCodes.Status404NotFound, "Not Found"),
             ErrorType.Conflict => (StatusCodes.Status409Conflict, "Conflict"),
             ErrorType.BusinessRule => (StatusCodes.Status400BadRequest, "Bad Request"),
+            ErrorType.Forbidden => (StatusCodes.Status403Forbidden , "Forbidden"),
             _ => (StatusCodes.Status400BadRequest, "Bad Request")
         };
 

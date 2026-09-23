@@ -15,6 +15,7 @@ public class LibraryDbContext : DbContext
     public DbSet<Member> Members => Set<Member>();
 
     public DbSet<Borrowing> Borrowings => Set<Borrowing>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,7 +27,13 @@ public class LibraryDbContext : DbContext
 
         modelBuilder.Entity<Member>()
             .HasIndex(x => x.Email)
-            .IsUnique();    
+            .IsUnique();
+
+        modelBuilder.Entity<User>()
+        .HasIndex(x => x.Email)
+        .IsUnique();
+
+        modelBuilder.UseOpenIddict();
     }
 
 }

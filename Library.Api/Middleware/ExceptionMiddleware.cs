@@ -29,6 +29,11 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
             await ProblemDetailsHelper.Create(context, StatusCodes.Status400BadRequest, "Bad Request", ex.Message, ex.Code)
                 .ExecuteAsync(context);
         }
+        catch (ForbiddenException ex)
+        {
+            logger.LogWarning(ex, "Forbidden: {Code} - {Message}", ex.Code, ex.Message);
+            await ProblemDetailsHelper.Create(context, StatusCodes.Status403Forbidden, "Forbidden", ex.Message, ex.Code).ExecuteAsync(context);
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled exception on {Method} {Path}", context.Request.Method, context.Request.Path);
@@ -38,5 +43,6 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
                     "internal_server_error")
                 .ExecuteAsync(context);
         }
+        
     }
 }

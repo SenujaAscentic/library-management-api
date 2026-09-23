@@ -13,4 +13,5 @@ public static class BorrowingErrors
     public static Error BorrowingLimitExceeded => new("borrowing_limit_exceeded", "Member borrowing limit exceeded.", ErrorType.BusinessRule);
     public static Error BorrowingNotFound => new("borrowing_not_found", "Borrowing record not found.", ErrorType.NotFound);
     public static Error AlreadyReturned => new("book_already_returned", "Book already returned.", ErrorType.BusinessRule);
+    public static Error Forbidden => new("forbidden", "You can only act on your own borrowings.", ErrorType.Forbidden);
 }

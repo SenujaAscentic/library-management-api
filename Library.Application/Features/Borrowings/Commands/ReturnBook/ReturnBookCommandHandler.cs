@@ -22,6 +22,11 @@ public class ReturnBookCommandHandler(
             logger.LogWarning("Return rejected: borrowing {BorrowingId} not found", request.BorrowingId);
             return Result<BorrowingResponse>.Failure(BorrowingErrors.BorrowingNotFound);
         }
+        if (request.RequestingMemberId is not null && borrowing.MemberId != request.RequestingMemberId.Value)
+        {
+            logger.LogWarning("Return rejected: borrowing {BorrowingId} does not belong to member {MemberId}", request.BorrowingId, request.RequestingMemberId);
+            return Result<BorrowingResponse>.Failure(BorrowingErrors.Forbidden);
+        }
 
         if (borrowing.ReturnedDate is not null)
         {

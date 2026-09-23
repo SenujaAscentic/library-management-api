@@ -1,11 +1,12 @@
-
 using FluentValidation;
+using Library.Api.Common.Authorization;
 using Library.Api.Common.Validation;
 using Library.Application.Features.Books.Commands.CreateBook;
 using Library.Application.Features.Books.Commands.DeleteBook;
 using Library.Application.Features.Books.Commands.UpdateBook;
 using Library.Application.Features.Books.Queries.GetAllBooks;
 using Library.Application.Features.Books.Queries.GetBookById;
+using Library.Domain.Exceptions;
 using MediatR;
 
 namespace Library.Api.Endpoints;
@@ -16,41 +17,46 @@ public static class BookEndpoints
     {
         app.MapPost("/api/books", async (CreateBookCommand command, IValidator<CreateBookCommand> validator, IMediator mediator, HttpContext httpContext) =>
         {
+            if (!AuthorizationHelper.IsAdmin(httpContext.User))
+                throw new ForbiddenException("forbidden", "Only Admins can create books.");
+
             var result = await ValidationHelper.ValidateAsync(command, validator, httpContext);
-            if (result is not null)
-            {
-                return result;
-            }
+            if (result is not null) return result;
             var book = await mediator.Send(command);
             return Results.Created($"/api/books/{book.Id}", book);
-        });
-        app.MapGet("/api/books", async(IMediator mediator) =>
+        }).RequireAuthorization();
+
+        app.MapGet("/api/books", async (IMediator mediator) =>
         {
             var books = await mediator.Send(new GetAllBooksQuery());
             return Results.Ok(books);
-        });
-        app.MapGet("/api/books/{id:guid}", async(Guid id, IMediator mediator) =>
+        }).RequireAuthorization();
+
+        app.MapGet("/api/books/{id:guid}", async (Guid id, IMediator mediator) =>
         {
-            var query = new GetBookByIdQuery(id);
-            var book = await mediator.Send(query);
+            var book = await mediator.Send(new GetBookByIdQuery(id));
             return Results.Ok(book);
-           
-        });
-        app.MapPut("/api/books/{id:guid}", async (Guid id, UpdateBookRequest body, IMediator mediator, IValidator<UpdateBookCommand> validator , HttpContext httpContext) =>
+        }).RequireAuthorization();
+
+        app.MapPut("/api/books/{id:guid}", async (Guid id, UpdateBookRequest body, IMediator mediator, IValidator<UpdateBookCommand> validator, HttpContext httpContext) =>
         {
+            if (!AuthorizationHelper.IsAdmin(httpContext.User))
+                throw new ForbiddenException("forbidden", "Only Admins can update books.");
+
             var command = new UpdateBookCommand(id, body.Title, body.Author, body.Isbn, body.PublishedYear, body.TotalCopies);
             var result = await ValidationHelper.ValidateAsync(command, validator, httpContext);
-            if (result is not null)
-            {
-                return result;
-            }
+            if (result is not null) return result;
             var book = await mediator.Send(command);
             return Results.Ok(book);
-        });
-        app.MapDelete("/api/books/{id:guid}", async(Guid id, IMediator mediator) =>
+        }).RequireAuthorization();
+
+        app.MapDelete("/api/books/{id:guid}", async (Guid id, IMediator mediator, HttpContext httpContext) =>
         {
+            if (!AuthorizationHelper.IsAdmin(httpContext.User))
+                throw new ForbiddenException("forbidden", "Only Admins can delete books.");
+
             await mediator.Send(new DeleteBookCommand(id));
             return Results.NoContent();
-        });
+        }).RequireAuthorization();
     }
 }
