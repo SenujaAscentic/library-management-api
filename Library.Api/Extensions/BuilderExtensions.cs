@@ -8,6 +8,7 @@ using Library.Infrastructure.Data;
 using Library.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi;
+using OpenIddict.Validation.AspNetCore;
 
 
 namespace Library.Api.Extensions;
@@ -38,7 +39,7 @@ public static class BuilderExtensions
         builder.Services
             .AddAuthentication(options =>
             {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
             })
             .AddCookie();
 
@@ -103,7 +104,7 @@ public static class BuilderExtensions
 
             options.AddSecurityRequirement(document =>
             {
-                var schemeRef = new OpenApiSecuritySchemeReference("oauth2");
+                var schemeRef = new OpenApiSecuritySchemeReference("oauth2", document);
                 return new OpenApiSecurityRequirement
                 {
                     [schemeRef] = new List<string> { "library_api" }

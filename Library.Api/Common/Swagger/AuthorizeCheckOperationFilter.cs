@@ -20,10 +20,6 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
         operation.Responses.TryAdd("401", new OpenApiResponse { Description = "Unauthorized" });
         operation.Responses.TryAdd("403", new OpenApiResponse { Description = "Forbidden" });
 
-        var schemeRef = new OpenApiSecuritySchemeReference("oauth2");
-        operation.Security = new List<OpenApiSecurityRequirement>
-        {
-            new OpenApiSecurityRequirement { [schemeRef] = new List<string> { "library_api" } }
-        };
+        
     }
 }
