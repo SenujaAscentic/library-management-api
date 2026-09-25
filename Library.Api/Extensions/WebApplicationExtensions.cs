@@ -18,25 +18,23 @@ public static class WebApplicationExtensions
         await dbContext.Database.MigrateAsync();
 
         var appManager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
-        if (await appManager.FindByClientIdAsync("library-client") is null)
-        {
-            await appManager.CreateAsync(new OpenIddictApplicationDescriptor
-            {
-                ClientId = "library-client",
-                ClientType = OpenIddictConstants.ClientTypes.Public,
-                RedirectUris = { new Uri("https://localhost:7282/swagger/oauth2-redirect.html") },
-                Permissions =
+        
+            // Swagger (browser) client
+            await UpsertClientAsync(appManager, CreatePublicClient(
+                clientId: "library-client",
+                displayName: "Swagger UI",
+                redirectUris: new[]
                 {
-                    OpenIddictConstants.Permissions.Endpoints.Authorization,
-                    OpenIddictConstants.Permissions.Endpoints.Token,
-                    OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-                    OpenIddictConstants.Permissions.ResponseTypes.Code,
-                    OpenIddictConstants.Permissions.Scopes.Profile,
-                    OpenIddictConstants.Permissions.Prefixes.Scope + "library_api"
-                },
-                Requirements = { OpenIddictConstants.Requirements.Features.ProofKeyForCodeExchange }
-            });
-        }
+                    "https://localhost:7282/swagger/oauth2-redirect.html",
+                    "http://localhost:5173/swagger/oauth2-redirect.html"
+                }));
+
+            // Flutter mobile client. Must match flutter_appauth's redirectUrl EXACTLY.
+            await UpsertClientAsync(appManager, CreatePublicClient(
+                clientId: "library-mobile",
+                displayName: "Library Mobile App",
+                redirectUris: new[] { "com.example.librarymanagementapp:/oauthredirect" }));
+        
 
         if (!await dbContext.Users.AnyAsync(u => u.Role == UserRole.Admin))
         {
@@ -45,6 +43,49 @@ public static class WebApplicationExtensions
             var admin = User.Create("admin@library.local", passwordHash, UserRole.Admin, null);
             dbContext.Users.Add(admin);
             await dbContext.SaveChangesAsync();
+        }
+    }
+    private static OpenIddictApplicationDescriptor CreatePublicClient(
+    string clientId, string displayName, IEnumerable<string> redirectUris)
+    {
+        var descriptor = new OpenIddictApplicationDescriptor
+        {
+            ClientId = clientId,
+            DisplayName = displayName,
+            ClientType = OpenIddictConstants.ClientTypes.Public,
+            Permissions =
+        {
+            OpenIddictConstants.Permissions.Endpoints.Authorization,
+            OpenIddictConstants.Permissions.Endpoints.Token,
+            OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+            OpenIddictConstants.Permissions.GrantTypes.RefreshToken,   // NEW
+            OpenIddictConstants.Permissions.ResponseTypes.Code,
+            OpenIddictConstants.Permissions.Scopes.Profile,
+            OpenIddictConstants.Permissions.Prefixes.Scope + "library_api"
+        },
+            Requirements = { OpenIddictConstants.Requirements.Features.ProofKeyForCodeExchange }
+        };
+
+        foreach (var uri in redirectUris)
+        {
+            descriptor.RedirectUris.Add(new Uri(uri));
+        }
+
+        return descriptor;
+    }
+
+    // Create-or-update, so code changes actually reach an existing database.
+    private static async Task UpsertClientAsync(
+        IOpenIddictApplicationManager manager, OpenIddictApplicationDescriptor descriptor)
+    {
+        var existing = await manager.FindByClientIdAsync(descriptor.ClientId!);
+        if (existing is null)
+        {
+            await manager.CreateAsync(descriptor);
+        }
+        else
+        {
+            await manager.UpdateAsync(existing, descriptor);
         }
     }
 
